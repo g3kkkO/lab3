@@ -1,5 +1,4 @@
 import random
-from collections import deque
 
 
 class Board:
@@ -77,24 +76,23 @@ class Board:
             self.state = "lost"
             return
 
-        queue = deque([(r, c)])
+        stack = [(r, c)]
 
-        while queue:
-            cell = queue.popleft()
+        while stack:
+            cell = stack.pop()
 
             if cell in self.opened or cell in self.flags:
                 continue
 
             self.opened.add(cell)
 
-
             if self.number(*cell) == 0:
-                queue.extend(
-                    neighbor
-                    for neighbor in self.neighbors(*cell)
-                    if neighbor not in self.opened
-                )
-
+                for neighbor in self.neighbors(*cell):
+                    if neighbor not in self.opened:
+                        stack.append(neighbor)
+                        
+                        
+                        
         safe_cells_count = self.rows * self.cols - self.mine_count
 
         if len(self.opened) == safe_cells_count:
